@@ -204,7 +204,7 @@ app.post("/app", checkAuth, async (req, res) => {
     })
   });
   
-  const server = client.server.get(userVoice.guild.id)
+  const server = client.servers.get(userVoice.guild.id)
 
   if(!userVoice) {
     return res.status(404).send("Vous n'êtes connecté a aucun salon vocale")
