@@ -1,0 +1,41 @@
+<%- include("src/partials/header.ejs", { bot, user, path, pageName: 'Settings'})
+%>
+
+<main role="main" class="jumbotron">
+  <div class="container-sm center">
+    <div class="d-grid gap-2 col-4 mx-auto">
+      <% if (alert) { %>
+      <div class="alert alert-success" role="alert"><%= alert %></div>
+      <% } %>
+      <h1 class="jumbotron-heading"><%= guild.name %></h1>
+      <hr />
+      <form method="POST">
+        <p class="h5" style="margin-bottom: 0.5rem; margin-top: 10px">
+          Préfix :
+        </p>
+        <p class="disabled">
+          Le préfixe est ajouté aux messages afin d'invoquer des commandes.
+        </p>
+        <input
+          type="text"
+          class="form-control bg-dark text-white"
+          name="prefix"
+          value="<%= settings.prefixDb %>"
+          placeholder="Prefix par défault : -"
+        />
+        <br /><button
+          type="submit"
+          class="btn btn-primary text-white"
+          id="submitPrefix"
+        >
+          Enregistrer
+        </button>
+        <a href="/app/<%= guild.id %>" class="btn btn-secondary"
+          >Ecouter de la musique (bêta)</a
+        >
+      </form>
+    </div>
+  </div>
+</main>
+
+<%- include("src/partials/footer.ejs", { footer: true }) %>

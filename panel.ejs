@@ -1,0 +1,68 @@
+<%- include("src/header.ejs", { bot, user, path, pageName: 'Panel'}) %>
+
+<main role="main">
+  <section class="jumbotron">
+    <h1 style="text-align: center; margin-bottom: 70px; margin-top: 0px">Choisissez un serveur :<br></h1>
+    <div class="server-container">
+      <% function acronym(guildName) {
+      const splited = guildName.split(' ')
+      const nbt = []
+      
+      splited.forEach((first) => {
+        const Esplited = first.split('')
+        nbt.push(Esplited[0])
+      })
+      return nbt.join('')
+    } %>
+      <% 
+      let hasGuild = false
+        user.guilds.forEach(guild => {
+          const permsOnGuild = new perms(guild.permissions_new);
+          if(!permsOnGuild.has(perms.FLAGS.MANAGE_GUILD)) return;
+          if(guild) hasGuild = true;
+        });%>
+      %><%
+      user.guilds.forEach(guild => {
+      const permsOnGuild = new perms(guild.permissions_new);
+      if(!permsOnGuild.has(perms.FLAGS.MANAGE_GUILD)) return;
+      if(!bot.guilds.cache.get(guild.id)) return;
+  %>
+      <div class="server-card text-white">
+        <%- guild.icon ? `<div class="card-logo-container"><div class="card-logo" style="background: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}) center center / cover no-repeat ;"></div><img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}" class="server-icon img-top" style="max-width: 18rem;"></div>` : `<div class='account circle card-no-logo'><p class='account-text'>${acronym(guild.name)}</p></div>`%>
+          <div class="card-content">
+            <div class="text-left">
+              <h3 class="server-title"><%= guild.name %></h5>
+            </div>
+           <a href="/panel/<%- guild.id %>" class="btn btn-primary text-white">Configurer</a>
+          </div>
+        </div>
+      <%
+      });
+  %>
+      <% user.guilds.forEach(guild => {
+    const permsOnGuild = new perms(guild.permissions_new);
+    if(!permsOnGuild.has(perms.FLAGS.MANAGE_GUILD)) return;
+    if(bot.guilds.cache.get(guild.id)) return;
+%>
+      <div class="server-card text-white">
+        <%- guild.icon ? `<div class="card-logo-container"><div class="card-logo" style="background: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}) center center / cover no-repeat ;"></div><img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}" class="server-icon img-top" style="max-width: 18rem;"></div>` : `<div class='account circle card-no-logo'><p class='account-text'>${acronym(guild.name)}</p></div>`%>
+        <!-- `<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3xKsVMoo2EGGk6x57P8c8tuT42a3F7AQcHRffg-JBML6USYEIuWhS02VKezJ4U6aDQqU&usqp=CAU" class="server-icon img-top">` %> -->
+        <div class="card-content">
+            <div class="text-left">
+            <h5 class="server-title card-title"><%= guild.name %></h5>
+            </div>
+            <div class="text-right">
+          <a href="<%= `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot&guild_id=${guild.id}&response_type=code&redirect_uri=${encodeURIComponent(`http://localhost${bot.port === 80 ? "" : `:${bot.port}`}/panel`)}`  %>" class="btn btn-secondary text-white">Inviter</a>
+        </div>
+          </div>
+        </div>
+      <%
+    });
+%>
+    </div>
+    <%- hasGuild ? `` : `<p class="any-server">Vous n'êtes propriétaire ou administrateur d'aucun serveur.<br></p>` -%> 
+  </section>
+
+</main>
+
+<%- include("src/footer.ejs", { footer: true }) %>

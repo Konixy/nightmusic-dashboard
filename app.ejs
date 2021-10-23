@@ -1,0 +1,34 @@
+<%- include("src/header.ejs", { bot, user, path, pageName: 'Panel'}) %>
+<% 
+
+let server;
+if(userVoice) {
+  if (!servers.has(userVoice.guild.id)) {
+      servers.set(userVoice.guild.id, {
+          queue: [],
+          currentVideo: {
+              url: "",
+              title: "Rien pour le moment."
+          },
+          dispatcher: null,
+          connection: null,
+          cooldown: false,
+      });
+  }
+  server = servers.get(userVoice.guild.id);
+  console.log(server)
+}
+
+%> 
+
+<main role="main">
+  <section class="jumbotron">
+<%- userVoice ? `<h1 class="userVoice">L'utilisateur ${user.username} est connecté au salon ${userVoice.channel.name} sur le serveur ${userVoice.guild.name}</h1>` : "<h1>Vous n'êtes dans aucun salon vocale.</h1>" -%>
+<form id="dispatcher">
+  <input type="button" id="pause-btn" onclick="pauseMusic()">test<i class="bi <%- server ? (server.dispatcher ? (server.dispatcher.state.status === "paused" ? "bi-play" : (server.dispatcher.state.status === "playing" ? "bi-pause" : "bi-play dispatcher-disabled") ) : "bi-play dispatcher-disabled") : "bi-play dispatcher-disabled" -%> " id="pause-icon"></i>
+</form>
+<p id="alert"></p>
+  </section>
+</main>
+
+<%- include("src/footer.ejs", { footer: false }) %>
