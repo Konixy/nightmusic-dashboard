@@ -1,0 +1,26 @@
+<%- include("src/header.ejs", { bot, user, path, pageName: 'Acceuil',
+activate: 'acceuil'}) %>
+
+<main role="main">
+  <section class="jumbotron text-center">
+    <div class="container">
+      <h1 class="jumbotron-heading">NightMusic</h1>
+      <p class="lead text-white-50">
+        NightMusic est un bot discord de musique en constant amélioration. Vous
+        pouvez utiliser ce panel pour gerer le bot.
+      </p>
+      <p>
+        <!-- <a href="/login" class="btn btn-primary my-2">Se connecter</a> -->
+        <%- user ? `<a href="/app" class="btn btn-primary my-2"
+          >Acceder au panel</a
+        >` : `<a href="/app" class="btn btn-primary login-btn"
+          ><img src="./public/discord_logo.png" class="login-img" /> Se
+          connecter</a
+        >` %><span class="ou"> ou </span>
+        <a href="/invite" class="btn btn-secondary my-2">Invitez NightMusic</a>
+      </p>
+    </div>
+  </section>
+</main>
+
+<%- include("src/footer.ejs", { footer: true }) %>
