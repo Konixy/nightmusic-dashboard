@@ -26,7 +26,7 @@ const app = express()
 const MemoryStore = CreateMemoryStore(session)
 
 const usingCustomDomain = config.usingCustomDomain
-const port = config.port
+const port = process.env.PORT
 const configDomain = config.configDomain
 const discordInvite = config.discordInvite
 
