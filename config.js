@@ -3,8 +3,8 @@ export default {
     prefix: "!",
     token: "ODYwODQ4NTkzODA0MDY2ODE2.YOBNug.hjN2gy5vQ_QynKr8PWG5fNHXouI",
     ytKey: "AIzaSyA1y10d8v2J9WvFMxzW3m9DbNP8LRhnX4c",
-    usingCustomDomain: false,
-    configDomain: "http://localhost",
+    usingCustomDomain: true,
+    configDomain: "https://nightmusic-dashboard.herokuapp.com",
     discordInvite: "https://discord.gg/WeHzUUz7ZZ"
   }
   
