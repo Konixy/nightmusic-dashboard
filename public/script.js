@@ -24,9 +24,15 @@ function pauseMusic() {
   var ajax = new XMLHttpRequest();
   ajax.onreadystatechange = function(){
     if(this.readyState == 4 && this.status == 200){
-      button.classList.toggle('bi-pause')
-      button.classList.toggle('bi-play')
+      if(this.response === 'paused') {
+        button.classList.remove('bi-pause')
+        button.classList.add('bi-play')
+      } else if(this.response === 'resumed') {
+        button.classList.remove('bi-play')
+        button.classList.add('bi-pause')
+      }
     } else if(this.status == 404) {
+
       alert.innerText = this.response
       alert.style.display = "block"
       setTimeout(() => {

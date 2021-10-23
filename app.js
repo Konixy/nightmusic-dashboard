@@ -204,10 +204,29 @@ app.post("/app", checkAuth, async (req, res) => {
     })
   });
   
+  const server = client.server.get(userVoice.guild.id)
+
   if(!userVoice) {
     return res.status(404).send("Vous n'êtes connecté a aucun salon vocale")
+  } else if(!server) {
+    return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
+  } else if(!server.connection.channel.id === userVoice.channel.id) {
+    return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
+  } else if(!server.dispatcher) {
+    return res.status(404).send("Aucune musique en cours de lecture")
   } else {
-    return res.status(200).send('done')
+    try {
+      if(server.dispatcher.state.status === "paused") {
+        server.dispatcher.unpause()
+        return res.status(200).send("resumed")
+      } else if(server.dispatcher.state.status === "playing") {
+        server.dispatcher.pause()
+        return res.status(200).send('paused')
+      }
+      return res.status(404).send('An error occured')
+    } catch {
+      return res.status(404).send('An error occured')
+    }
   }
 })
 
