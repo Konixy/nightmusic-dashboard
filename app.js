@@ -216,7 +216,9 @@ app.post("/app", checkAuth, async (req, res) => {
   }
 
   if(server) {
-    if(!server.connection.channelId === userVoice.channel.id) {
+    if(!server.connection) {
+      return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
+    } else if(!server.connection.channelId === userVoice.channel.id) {
       return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
     } else if(!server.dispatcher) {
       return res.status(404).send("Aucune musique en cours de lecture")
