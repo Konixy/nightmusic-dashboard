@@ -66,7 +66,7 @@ passport.use(
     {
       clientID: '832356026740637706',
       clientSecret: 'fFQxTG07jT6DaDduE-hYzev9y0pgCdhS',
-      callbackURL: '/callback',
+      callbackURL: callbackUrl,
       scope: ["identify", "guilds"],
     },
     (accessToken, refreshToken, profile, done) => {
