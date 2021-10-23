@@ -40,6 +40,10 @@
     "start": "node .",
     "nodemon": "nodemon ."
   },
+  "engines": {
+    "node": "16.x",
+    "npm": "8.x"
+   },
   "keywords": [],
   "author": "",
   "license": "ISC",
