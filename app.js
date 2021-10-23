@@ -204,28 +204,35 @@ app.post("/app", checkAuth, async (req, res) => {
     })
   });
   
-  const server = client.servers.get(userVoice.guild.id)
-
-  if(!userVoice) {
+  let server;
+  try {
+    server = client.servers.get(userVoice.guild.id)
+    if(!server) {
+      return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
+    }
+  } catch {
+    server = null
     return res.status(404).send("Vous n'êtes connecté a aucun salon vocale")
-  } else if(!server) {
-    return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
-  } else if(!server.connection.channelId === userVoice.channel.id) {
-    return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
-  } else if(!server.dispatcher) {
-    return res.status(404).send("Aucune musique en cours de lecture")
-  } else {
-    try {
-      if(server.dispatcher.state.status === "paused") {
-        server.dispatcher.unpause()
-        return res.status(200).send("resumed")
-      } else if(server.dispatcher.state.status === "playing") {
-        server.dispatcher.pause()
-        return res.status(200).send('paused')
+  }
+
+  if(server) {
+    if(!server.connection.channelId === userVoice.channel.id) {
+      return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
+    } else if(!server.dispatcher) {
+      return res.status(404).send("Aucune musique en cours de lecture")
+    } else {
+      try {
+        if(server.dispatcher.state.status === "paused") {
+          server.dispatcher.unpause()
+          return res.status(200).send("resumed")
+        } else if(server.dispatcher.state.status === "playing") {
+          server.dispatcher.pause()
+          return res.status(200).send('paused')
+        }
+        return res.status(404).send('An error occured')
+      } catch {
+        return res.status(404).send('An error occured')
       }
-      return res.status(404).send('An error occured')
-    } catch {
-      return res.status(404).send('An error occured')
     }
   }
 })
