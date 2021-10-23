@@ -26,7 +26,7 @@ const app = express()
 const MemoryStore = CreateMemoryStore(session)
 
 const usingCustomDomain = config.usingCustomDomain
-const port = process.env.PORT
+const port = process.env.PORT || 5000
 const configDomain = config.configDomain
 const discordInvite = config.discordInvite
 
@@ -215,7 +215,7 @@ app.get("/invite", (req, res) => {
   res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&response_type=code&redirect_uri=${encodeURIComponent(`${client.configDomain}${client.port === 80 ? "" : `:${client.port}`}/panel`)}`)
 });
 
-app.listen(80, null, null, () => {
+app.listen(port, null, null, () => {
   console.log(`✅ Server ready on port ${port}`.green)
 })
 }
