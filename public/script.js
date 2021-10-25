@@ -25,11 +25,11 @@ function pauseMusic() {
   ajax.onreadystatechange = function(){
     if(this.readyState == 4 && this.status == 200){
       if(this.response === 'paused') {
-        button.classList.remove('btn-pause')
-        button.classList.add('btn-play')
-      } else if(this.response === 'resumed') {
         button.classList.remove('btn-play')
         button.classList.add('btn-pause')
+      } else if(this.response === 'resumed') {
+        button.classList.remove('btn-pause')
+        button.classList.add('btn-play')
       }
     } else if(this.status == 404) {
 
