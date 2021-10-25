@@ -26,8 +26,9 @@ const app = express()
 const MemoryStore = CreateMemoryStore(session)
 
 const usingCustomDomain = config.usingCustomDomain
-const port = process.env.PORT || 5000
-const configDomain = config.configDomain
+const port = process.env.PORT || 80
+const configDomain = (config.isLocal ? config.localDomain : config.configDomain)
+
 const discordInvite = config.discordInvite
 
 export default async (client, sendMessage) => {
@@ -217,7 +218,7 @@ app.post("/app", checkAuth, async (req, res) => {
 
   if(server) {
     if(!server.connection) {
-      return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
+      return res.status(404).send("Aucune musique en cours de lecture")
     } else if(!server.connection.channelId === userVoice.channel.id) {
       return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
     } else if(!server.dispatcher) {
@@ -230,6 +231,8 @@ app.post("/app", checkAuth, async (req, res) => {
         } else if(server.dispatcher.state.status === "playing") {
           server.dispatcher.pause()
           return res.status(200).send('paused')
+        } else if(server.dispatcher.state.status === "idle") {
+          return res.status(404).send('Aucune musique en cours de lecture')
         }
         return res.status(404).send('An error occured')
       } catch {

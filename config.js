@@ -5,6 +5,8 @@ export default {
     ytKey: "AIzaSyA1y10d8v2J9WvFMxzW3m9DbNP8LRhnX4c",
     usingCustomDomain: true,
     configDomain: "https://nightmusic-dashboard.herokuapp.com",
+    localDomain: "http://localhost",
+    isLocal: true,
     discordInvite: "https://discord.gg/WeHzUUz7ZZ"
   }
   

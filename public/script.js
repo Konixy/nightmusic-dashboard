@@ -20,16 +20,16 @@ function inviteBot(page) {
 
 function pauseMusic() {
   const alert = document.getElementById('alert')
-  const button = document.getElementById('pause-icon')
+  const button = document.getElementById('dispatcher-btn')
   var ajax = new XMLHttpRequest();
   ajax.onreadystatechange = function(){
     if(this.readyState == 4 && this.status == 200){
       if(this.response === 'paused') {
-        button.classList.remove('bi-pause')
-        button.classList.add('bi-play')
+        button.classList.remove('btn-pause')
+        button.classList.add('btn-play')
       } else if(this.response === 'resumed') {
-        button.classList.remove('bi-play')
-        button.classList.add('bi-pause')
+        button.classList.remove('btn-play')
+        button.classList.add('btn-pause')
       }
     } else if(this.status == 404) {
 
@@ -45,9 +45,12 @@ function pauseMusic() {
   ajax.send(formdata);
 }
 
+// function skip() {
+  
+// }
+
 $(document).ready(() => {
   dropdown.forEach(e => {
-    // e.innerHTML += '<i class="fas fa-caret-down drop-icon"></i>'
     e.innerHTML += '<img src="https://mee6.xyz/assets/028b613c85837c6a55c1fe1867f2df21.svg" class="drop-icon">'
     e.addEventListener('click', () => {
       e.classList.toggle('active')
