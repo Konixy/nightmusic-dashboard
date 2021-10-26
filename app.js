@@ -266,7 +266,9 @@ app.get("/app", checkAuth, async (req, res) => {
     }
 
     socket.on('pause', async (response) => {
-      if(response.succes) return;
+      if(response) {
+        if(response.succes) return;
+      }
       if(server) {
         if(!server.connection) {
           return io.emit('pause', { succes: false, msg: "Aucune musique en cours de lecture" })
