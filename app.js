@@ -237,56 +237,56 @@ app.get("/app", checkAuth, async (req, res) => {
 });
 
 
-app.post("/app", checkAuth, async (req, res) => {
-  let userVoice;
-  await req.user.guilds.forEach(async guild => {
-    const permsOnGuild = new Permissions(guild.permissions_new);
-    if(!permsOnGuild.has(Permissions.FLAGS.MANAGE_GUILD)) return;
-    const clientGuild = client.guilds.cache.get(guild.id)
-    if(!clientGuild) return;
-    clientGuild.members.fetch(req.user.id).then(async member => {
-      if(member.voice.channelId) {
-          userVoice = member.voice;
-      }
-    })
-  });
+// app.post("/app", checkAuth, async (req, res) => {
+//   let userVoice;
+//   await req.user.guilds.forEach(async guild => {
+//     const permsOnGuild = new Permissions(guild.permissions_new);
+//     if(!permsOnGuild.has(Permissions.FLAGS.MANAGE_GUILD)) return;
+//     const clientGuild = client.guilds.cache.get(guild.id)
+//     if(!clientGuild) return;
+//     clientGuild.members.fetch(req.user.id).then(async member => {
+//       if(member.voice.channelId) {
+//           userVoice = member.voice;
+//       }
+//     })
+//   });
   
-  let server;
-  try {
-    server = client.servers.get(userVoice.guild.id)
-    if(!server) {
-      return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
-    }
-  } catch {
-    server = null
-    return res.status(404).send("Vous n'êtes connecté a aucun salon vocale")
-  }
+//   let server;
+//   try {
+//     server = client.servers.get(userVoice.guild.id)
+//     if(!server) {
+//       return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
+//     }
+//   } catch {
+//     server = null
+//     return res.status(404).send("Vous n'êtes connecté a aucun salon vocale")
+//   }
 
-  if(server) {
-    if(!server.connection) {
-      return res.status(404).send("Aucune musique en cours de lecture")
-    } else if(!server.connection.channelId === userVoice.channel.id) {
-      return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
-    } else if(!server.dispatcher) {
-      return res.status(404).send("Aucune musique en cours de lecture")
-    } else {
-      try {
-        if(server.dispatcher.state.status === "paused") {
-          server.dispatcher.unpause()
-          return res.status(200).send("resumed")
-        } else if(server.dispatcher.state.status === "playing") {
-          server.dispatcher.pause()
-          return res.status(200).send('paused')
-        } else if(server.dispatcher.state.status === "idle") {
-          return res.status(404).send('Aucune musique en cours de lecture')
-        }
-        return res.status(404).send('An error occured')
-      } catch {
-        return res.status(404).send('An error occured')
-      }
-    }
-  }
-})
+//   if(server) {
+//     if(!server.connection) {
+//       return res.status(404).send("Aucune musique en cours de lecture")
+//     } else if(!server.connection.channelId === userVoice.channel.id) {
+//       return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
+//     } else if(!server.dispatcher) {
+//       return res.status(404).send("Aucune musique en cours de lecture")
+//     } else {
+//       try {
+//         if(server.dispatcher.state.status === "paused") {
+//           server.dispatcher.unpause()
+//           return res.status(200).send("resumed")
+//         } else if(server.dispatcher.state.status === "playing") {
+//           server.dispatcher.pause()
+//           return res.status(200).send('paused')
+//         } else if(server.dispatcher.state.status === "idle") {
+//           return res.status(404).send('Aucune musique en cours de lecture')
+//         }
+//         return res.status(404).send('An error occured')
+//       } catch {
+//         return res.status(404).send('An error occured')
+//       }
+//     }
+//   }
+// })
 
 app.get("/invite", (req, res) => {
   res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&response_type=code&redirect_uri=${encodeURIComponent(`${client.configDomain}${client.port === 80 ? "" : `:${client.port}`}/panel`)}`)

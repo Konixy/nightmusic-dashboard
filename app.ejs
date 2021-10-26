@@ -34,27 +34,33 @@ if(userVoice) {
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io()
+const alert = document.getElementById('alert')
+const button = document.getElementById('dispatcher-btn')
 
 function pauseMusic() {
-  const alert = document.getElementById('alert')
-  const button = document.getElementById('dispatcher-btn')
+  button.classList.add('spinner-border')
   socket.emit('pause')
-  socket.on('pause', (response) => {
-    if(response.msg === 'paused') {
-      button.classList.remove('btn-play')
-      button.classList.add('btn-pause')
-    } else if(response.msg === 'resumed') {
-      button.classList.remove('btn-pause')
-      button.classList.add('btn-play')
-    } else if(response.status === 404) {
-      alert.innerText = response.msg
-      alert.style.display = "block"
-      setTimeout(() => {
-        alert.style.display = "none"
-      }, 2500)
-    }
-  })
 }
+
+socket.on('pause', (response) => {
+  if(response.msg === 'paused') {
+    button.classList.remove('spinner-border')
+    button.classList.remove('btn-play')
+    button.classList.add('btn-pause')
+  } else if(response.msg === 'resumed') {
+    button.classList.remove('spinner-border')
+    button.classList.remove('btn-pause')
+    button.classList.add('btn-play')
+  } else if(response.status === 404) {
+    button.classList.remove('spinner-border')
+    alert.innerText = response.msg
+    alert.style.display = "block"
+    setTimeout(() => {
+      alert.style.display = "none"
+    }, 2500)
+  }
+})
+
 </script>
 
 <%- include("src/footer.ejs", { footer: false }) %>
