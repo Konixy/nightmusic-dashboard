@@ -213,9 +213,9 @@ app.get("/app", checkAuth, async (req, res) => {
     } else if(!server.dispatcher) {
       return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     }
-    if(userVoice) {
-      console.log(userVoice)
-      userVoice.on('stateChange', (oldState, newState) => {
+    if(server.connection) {
+      console.log(server.connection)
+      server.connection.on('stateChange', (oldState, newState) => {
         console.log(oldState + ' => ' + newState)
         if(newState === 'playing') {
           io.emit('userVoice', { succes: true, msg: null, state: "playing" })
