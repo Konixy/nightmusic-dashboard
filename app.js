@@ -193,33 +193,16 @@ app.get("/app", checkAuth, async (req, res) => {
     })
   });
 
-  // io.emit('pause', { succes: false, msg: server.currentVideo })
-
   io.on('connection', async (socket) => {
     let server;
     try {
       server = client.servers.get(userVoice.guild.id)
       if(!server) {
-        io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale" })
+        return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale" })
       }
     } catch {
       server = null
-      io.emit('userVoice', { succes: false, msg: "Vous n'êtes connecté à aucun salon vocale" })
-    }
-    if(!server.connection) {
-      io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
-    } else if(!server.connection.channelId === userVoice.channel.id) {
-      io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale", state: "error" })
-    } else if(!server.dispatcher) {
-      io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
-    } else if(server.currentVideo.url) {
-      if(server.dispatcher.state.status === "playing") {
-        io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "playing" })
-      } else if(server.dispatcher.state.status === "idle") {
-        io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
-      }
-    } else if(!server.currentVideo.url) {
-      io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+      return io.emit('userVoice', { succes: false, msg: "Vous n'êtes connecté à aucun salon vocale" })
     }
     
     server.dispatcher.on('stateChange', (oldState, newState) => {
@@ -253,7 +236,22 @@ app.get("/app", checkAuth, async (req, res) => {
         return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
       }
     })
-      
+
+    if(!server.connection) {
+      io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+    } else if(!server.connection.channelId === userVoice.channel.id) {
+      io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale", state: "error" })
+    } else if(!server.dispatcher) {
+      io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+    } else if(server.currentVideo.url) {
+      if(server.dispatcher.state.status === "playing") {
+        io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "playing" })
+      } else if(server.dispatcher.state.status === "idle") {
+        io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
+      }
+    } else if(!server.currentVideo.url) {
+      io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+    }
 
     socket.on('pause', async () => {
       if(server) {
