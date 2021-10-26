@@ -545,5 +545,7 @@ footer {
 
 .spinner-border {
   background-image: none;
-  border: solid;
+  border: solid .25em currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
 }
