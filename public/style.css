@@ -542,3 +542,8 @@ footer {
   background: center no-repeat url("skip-icon.png"), transparent;
   background-size: 75%;
 }
+
+.spinner-border {
+  background-image: none;
+  border: solid;
+}
