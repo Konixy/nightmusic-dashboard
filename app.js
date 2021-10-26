@@ -224,8 +224,8 @@ app.get("/app", checkAuth, async (req, res) => {
               return res.status(404).send('Aucune musique en cours de lecture')
             }
             return res.status(404).send('An error occured')
-          } catch {
-            return res.status(404).send('An error occured')
+          } catch (err) {
+            return console.log(err)
           }
         }
       }
