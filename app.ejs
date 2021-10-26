@@ -22,11 +22,13 @@ if(userVoice) {
 
 <main role="main">
   <section class="jumbotron">
-<%- userVoice ? `<h1 class="userVoice">L'utilisateur ${user.username} est connecté au salon ${userVoice.channel.name} sur le serveur ${userVoice.guild.name}</h1>` : "<h1>Vous n'êtes dans aucun salon vocale.</h1>" -%>
+<!-- <%-// userVoice ? `<h1 class="userVoice">L'utilisateur ${user.username} est connecté au salon ${userVoice.channel.name} sur le serveur ${userVoice.guild.name}</h1>` : "<h1>Vous n'êtes dans aucun salon vocale.</h1>" -%> -->
+<h1 id="voice-state-alert">Chargement en cours...</h1>
 <form id="dispatcher">
-  <input type="button" class="dispatcher-btn skipdown" id="skipdown">
-  <input type="button" id="dispatcher-btn" class="dispatcher-btn <%- server ? (server.dispatcher ? (server.dispatcher.state.status === "paused" ? "btn-pause\"" : (server.dispatcher.state.status === "playing" ? "btn-play\"" : "btn-pause\" disabled") ) : "btn-pause\" disabled") : "btn-pause\" disabled" -%> id="pause-btn" onclick="pauseMusic()">
-  <input type="button" class="dispatcher-btn skipup" id="skipup">
+  <input type="button" class="dispatcher-btn skipdown" disabled id="skipdown">
+  <!-- <input type="button" id="dispatcher-btn" class="dispatcher-btn <%- // server ? (server.dispatcher ? (server.dispatcher.state.status === "paused" ? "btn-pause\"" : (server.dispatcher.state.status === "playing" ? "btn-play\"" : "btn-pause\" disabled") ) : "btn-pause\" disabled") : "btn-pause\" disabled" -%> id="pause-btn" onclick="pauseMusic()"> -->
+  <input type="button" id="dispatcher-btn" class="dispatcher-btn btn-pause" disabled id="pause-btn" onclick="pauseMusic()">
+  <input type="button" class="dispatcher-btn skipup" disabled id="skipup">
 </form>
 <p id="alert"></p>
   </section>
@@ -35,23 +37,45 @@ if(userVoice) {
 <script>
 const socket = io()
 const alert = document.getElementById('alert')
+const skipup = document.getElementById('skipup')
+const skipdown = document.getElementById('skipdown')
 const button = document.getElementById('dispatcher-btn')
+const stateText = document.getElementById('voice-state-alert')
+
+function disable() {
+  skipup.ariaDisabled = true
+  skipdown.ariaDisabled = true
+  button.ariaDisabled = true
+}
 
 function pauseMusic() {
+  button.ariaDisabled = true
   button.classList.add('spinner-border')
   socket.emit('pause')
 }
 
+socket.on('userVoice', (response) => {
+  if(response.succes === true) {
+    button.ariaDisabled = false
+  } else {
+    disable()
+    stateText.innerText = response.msg
+  }
+})
+
 socket.on('pause', (response) => {
-  if(response.msg === 'paused') {
+  if(response.succes === true && response.msg === 'paused') {
+    button.ariaDisabled = false
     button.classList.remove('spinner-border')
     button.classList.remove('btn-play')
     button.classList.add('btn-pause')
-  } else if(response.msg === 'resumed') {
+  } else if(response.succes === true && response.msg === 'resumed') {
+    button.ariaDisabled = false
     button.classList.remove('spinner-border')
     button.classList.remove('btn-pause')
     button.classList.add('btn-play')
-  } else if(response.status === 404) {
+  } else if(response.succes === false) {
+    button.ariaDisabled = true
     button.classList.remove('spinner-border')
     alert.innerText = response.msg
     alert.style.display = "block"

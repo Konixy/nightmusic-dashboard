@@ -7,7 +7,7 @@ import express from "express"
 import passport from "passport"
 import bodyParser from "body-parser"
 import session from "express-session"
-import { Permissions } from "discord.js"
+import { NewsChannel, Permissions } from "discord.js"
 import { Strategy } from "passport-discord"
 import CreateMemoryStore from "memorystore"
 import figlet from "figlet"
@@ -18,6 +18,7 @@ import Http from "http"
 const app = express()
 const http = Http.Server(app)
 import Socket from "socket.io"
+import { isGeneratorFunction } from 'util/types'
 const io = new Socket(http)
 
 let GuildSettings;
@@ -192,43 +193,63 @@ app.get("/app", checkAuth, async (req, res) => {
     })
   });
 
-  io.on('connection', async (socket) => {
-    socket.on('pause', () => {
-      let server;
-      try {
-        server = client.servers.get(userVoice.guild.id)
-        if(!server) {
-          return io.emit('pause', { status: 404, msg: "Je ne suis pas connecté a votre salon vocale" })
-        }
-      } catch {
-        server = null
-        return io.emit('pause', { status: 404, msg: "Vous n'êtes connecté a aucun salon vocale" })
-      } // io.emit('pause', { status: 404, msg: "" })
+  // io.emit('pause', { succes: false, msg: "" })
 
+  io.on('connection', async (socket) => {
+    let server;
+    try {
+      server = client.servers.get(userVoice.guild.id)
+      if(!server) {
+        return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté a votre salon vocale" })
+      }
+    } catch {
+      server = null
+      return io.emit('userVoice', { succes: false, msg: "Vous n'êtes connecté a aucun salon vocale" })
+    }
+    if(!server.connection) {
+      return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+    } else if(!server.connection.channelId === userVoice.channel.id) {
+      return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté a votre salon vocale", state: "error" })
+    } else if(!server.dispatcher) {
+      return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+    }
+
+    userVoice.on('stateChange', (oldState, newState) => {
+      console.log(oldState + ' => ' + newState)
+      if(newState === 'playing') {
+        io.emit('userVoice', { succes: true, msg: null, state: "playing" })
+      } else if(newState === "idle") {
+        io.emit('userVoice', { succes: true, msg: null, state: "idle" })
+      }
+    })
+
+    socket.on('pause', () => {
       if(server) {
         if(!server.connection) {
-          return io.emit('pause', { status: 404, msg: "Aucune musique en cours de lecture" })
+          return io.emit('pause', { succes: false, msg: "Aucune musique en cours de lecture" })
         } else if(!server.connection.channelId === userVoice.channel.id) {
-          return io.emit('pause', { status: 404, msg: "Je ne suis pas connecté a votre salon vocale" })
+          return io.emit('pause', { succes: false, msg: "Je ne suis pas connecté a votre salon vocale" })
         } else if(!server.dispatcher) {
-          return io.emit('pause', { status: 404, msg: "Aucune musique en cours de lecture" })
+          return io.emit('pause', { succes: false, msg: "Aucune musique en cours de lecture" })
         } else {
           try {
             if(server.dispatcher.state.status === "paused") {
-              server.dispatcher.unpause()
-              return io.emit('pause', { status: 200, msg: "resumed" })
+              await server.dispatcher.unpause()
+              return io.emit('pause', { succes: true, msg: "resumed" })
             } else if(server.dispatcher.state.status === "playing") {
-              server.dispatcher.pause()
-              return io.emit('pause', { status: 200, msg: 'paused' })
+              await server.dispatcher.pause()
+              return io.emit('pause', { succes: true, msg: 'paused' })
             } else if(server.dispatcher.state.status === "idle") {
-              return io.emit('pause', { status: 404, msg: 'Aucune musique en cours de lecture' })
+              return io.emit('pause', { succes: false, msg: 'Aucune musique en cours de lecture' })
             }
-            return io.emit('pause', { status: 404, msg: 'An error occured' })
+            return io.emit('pause', { succes: false, msg: 'An error occured' })
           } catch (err) {
-            io.emit('pause', { status: 404, msg: 'An error occured' })
+            io.emit('pause', { succes: false, msg: 'An error occured' })
             return console.log(err)
           }
         }
+      } else {
+        return io.emit('pause', { succes: false, msg: "Je ne suis pas connecté a votre salon vocale" })
       }
     })
   })
