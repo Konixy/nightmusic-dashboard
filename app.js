@@ -213,16 +213,28 @@ app.get("/app", checkAuth, async (req, res) => {
     } else if(!server.dispatcher) {
       return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     }
-    if(server.connection) {
-      server.connection.on('stateChange', (oldState, newState) => {
-        console.log(oldState.status + ' => ' + newState.status)
-        if(newState.status === 'playing') {
-          io.emit('userVoice', { succes: true, msg: server, state: "playing" })
-        } else if(newState.status === "paused" || newState.status === "autopaused") {
-          io.emit('userVoice', { succes: true, msg: server, state: "paused" })
-        }
-      })
-    }
+    
+    server.dispatcher.on('stateChange', (oldState, newState) => {
+      console.log(oldState.status + ' => ' + newState.status)
+      if(newState.status === 'playing') {
+        io.emit('userVoice', { succes: true, msg: server, state: "playing" })
+      } else if(newState.status === "paused" || newState.status === "autopaused") {
+        io.emit('userVoice', { succes: true, msg: server, state: "paused" })
+      }
+    })
+    server.connection.on('idle', (oldState, newState) => {
+      console.log(oldState.status + ' => ' + newState.status)
+      io.emit('userVoice', { succes: true, msg: server, state: "paused" })
+    })
+    server.connection.on('destroyed' || 'disconnected', (oldState, newState) => {
+      console.log(oldState.status + ' => ' + newState.status)
+      io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale", state: "error" })
+    })
+    server.connection.on('ready', (oldState, newState) => {
+      console.log(oldState.status + ' => ' + newState.status)
+      io.emit('userVoice', { succes: true, msg: server, state: "playing" })
+    })
+      
 
     socket.on('pause', async () => {
       if(server) {
