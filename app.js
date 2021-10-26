@@ -196,7 +196,7 @@ app.get("/app", checkAuth, async (req, res) => {
   io.on('connection', async (socket) => {
     let server;
     try {
-      server = client.servers.get(userVoice.guild.id)
+      server = await client.servers.get(userVoice.guild.id)
       if(!server) {
         return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale" })
       }
@@ -204,7 +204,7 @@ app.get("/app", checkAuth, async (req, res) => {
       server = null
       return io.emit('userVoice', { succes: false, msg: "Vous n'êtes connecté à aucun salon vocale" })
     }
-    
+
     server.dispatcher.on('stateChange', (oldState, newState) => {
       console.log(oldState.status + ' => ' + newState.status)
       if(newState.status === 'playing') {
