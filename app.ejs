@@ -46,13 +46,13 @@ function disable(state) {
   if(typeof state !== "boolean") {
     return console.log('Disable arguments must be a boolean')
   }
-  skipup.ariaDisabled = state
-  skipdown.ariaDisabled = state
-  button.ariaDisabled = state
+  skipup.disabled = state
+  skipdown.disabled = state
+  button.disabled = state
 }
 
 function pauseMusic() {
-  button.ariaDisabled = true
+  button.disabled = true
   button.classList.add('spinner-border')
   socket.emit('pause')
 }
