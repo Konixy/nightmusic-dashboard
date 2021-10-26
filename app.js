@@ -200,26 +200,26 @@ app.get("/app", checkAuth, async (req, res) => {
     try {
       server = client.servers.get(userVoice.guild.id)
       if(!server) {
-        return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale" })
+        io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale" })
       }
     } catch {
       server = null
-      return io.emit('userVoice', { succes: false, msg: "Vous n'êtes connecté à aucun salon vocale" })
+      io.emit('userVoice', { succes: false, msg: "Vous n'êtes connecté à aucun salon vocale" })
     }
     if(!server.connection) {
-      return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+      io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     } else if(!server.connection.channelId === userVoice.channel.id) {
-      return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale", state: "error" })
+      io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale", state: "error" })
     } else if(!server.dispatcher) {
-      return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+      io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     } else if(server.currentVideo.url) {
       if(server.dispatcher.state.status === "playing") {
-        return io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "playing" })
+        io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "playing" })
       } else if(server.dispatcher.state.status === "idle") {
-        return io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
+        io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
       }
     } else if(!server.currentVideo.url) {
-      return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+      io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     }
     
     server.dispatcher.on('stateChange', (oldState, newState) => {
