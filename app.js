@@ -200,28 +200,30 @@ app.get("/app", checkAuth, async (req, res) => {
     try {
       server = client.servers.get(userVoice.guild.id)
       if(!server) {
-        return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté a votre salon vocale" })
+        return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale" })
       }
     } catch {
       server = null
-      return io.emit('userVoice', { succes: false, msg: "Vous n'êtes connecté a aucun salon vocale" })
+      return io.emit('userVoice', { succes: false, msg: "Vous n'êtes connecté à aucun salon vocale" })
     }
     if(!server.connection) {
       return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     } else if(!server.connection.channelId === userVoice.channel.id) {
-      return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté a votre salon vocale", state: "error" })
+      return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale", state: "error" })
     } else if(!server.dispatcher) {
       return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     }
-
-    userVoice.on('stateChange', (oldState, newState) => {
-      console.log(oldState + ' => ' + newState)
-      if(newState === 'playing') {
-        io.emit('userVoice', { succes: true, msg: null, state: "playing" })
-      } else if(newState === "idle") {
-        io.emit('userVoice', { succes: true, msg: null, state: "idle" })
-      }
-    })
+    if(userVoice) {
+      console.log(userVoice)
+      userVoice.on('stateChange', (oldState, newState) => {
+        console.log(oldState + ' => ' + newState)
+        if(newState === 'playing') {
+          io.emit('userVoice', { succes: true, msg: null, state: "playing" })
+        } else if(newState === "idle") {
+          io.emit('userVoice', { succes: true, msg: null, state: "idle" })
+        }
+      })
+    }
 
     socket.on('pause', async () => {
       if(server) {
