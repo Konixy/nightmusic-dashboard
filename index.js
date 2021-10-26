@@ -105,6 +105,10 @@ async function runVideo(message) {
 
     server.queue.shift();
 
+    audioPlayer.on('stateChange', (oldState, newState) => {
+        console.log(oldState.status + ' => ' + newState.status)
+    })
+
     audioPlayer.on('error', error => {
         console.error(`${error}`.red);
     });
