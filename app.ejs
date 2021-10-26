@@ -57,8 +57,8 @@ function pauseMusic() {
 socket.on('userVoice', (response) => {
   if(response.succes === true) {
     button.ariaDisabled = false
-    if(response.msg.currentVideo) {
-      stateText.innerHTML = `<a href="${response.msg.currentVideo.url}">${response.msg.currentVideo.title}</a>`
+    if(response.msg) {
+      stateText.innerHTML = `<a href="${response.msg.url}">${response.msg.title}</a>`
     } else {
       stateText.innerText = "pas de musik zbi"
     }
