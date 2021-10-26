@@ -209,15 +209,6 @@ app.get("/app", checkAuth, async (req, res) => {
       return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     }
 
-    server.connection.on('stateChange', (oldState, newState) => {
-      console.log(oldState.status + ' => ' + newState.status + " : stateChange")
-      if(newState.status === 'playing') {
-        io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "playing" })
-      } else if(newState.status === "paused" || newState.status === "autopaused") {
-        io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
-      }
-    })
-
     server.dispatcher.on('idle', (oldState, newState) => {
       console.log(oldState.status + ' => ' + newState.status + " : idle")
       io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
