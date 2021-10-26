@@ -42,10 +42,13 @@ const skipdown = document.getElementById('skipdown')
 const button = document.getElementById('dispatcher-btn')
 const stateText = document.getElementById('voice-state-alert')
 
-function disable() {
-  skipup.ariaDisabled = true
-  skipdown.ariaDisabled = true
-  button.ariaDisabled = true
+function disable(state) {
+  if(typeof state !== "boolean") {
+    return console.log('Disable arguments must be a boolean')
+  }
+  skipup.ariaDisabled = state
+  skipdown.ariaDisabled = state
+  button.ariaDisabled = state
 }
 
 function pauseMusic() {
@@ -56,31 +59,38 @@ function pauseMusic() {
 
 socket.on('userVoice', (response) => {
   if(response.succes === true) {
-    button.ariaDisabled = false
+    disable(false)
+    if(response.state === "playing") {
+      button.classList.remove('btn-pause')
+      button.classList.add('btn-play')
+    } else if(response.state === "paused") {
+      button.classList.remove('btn-play')
+      button.classList.add('btn-pause')
+    }
     if(response.msg) {
       stateText.innerHTML = `<a href="${response.msg.url}">${response.msg.title}</a>`
     } else {
       stateText.innerText = "pas de musik zbi"
     }
   } else {
-    disable()
+    disable(true)
     stateText.innerText = response.msg
   }
 })
 
 socket.on('pause', (response) => {
   if(response.succes === true && response.msg === 'paused') {
-    button.ariaDisabled = false
+    disable(false)
     button.classList.remove('spinner-border')
     button.classList.remove('btn-play')
     button.classList.add('btn-pause')
   } else if(response.succes === true && response.msg === 'resumed') {
-    button.ariaDisabled = false
+    disable(false)
     button.classList.remove('spinner-border')
     button.classList.remove('btn-pause')
     button.classList.add('btn-play')
   } else if(response.succes === false) {
-    button.ariaDisabled = true
+    disable(true)
     button.classList.remove('spinner-border')
     alert.innerText = response.msg
     alert.style.display = "block"
