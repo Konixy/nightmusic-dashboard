@@ -267,7 +267,7 @@ app.get("/app", checkAuth, async (req, res) => {
 
     socket.on('pause', async (response) => {
       if(response) {
-        if(response.succes) return;
+        if(response.succes === true || response.succes === false) return;
       }
       if(server) {
         if(!server.connection) {
