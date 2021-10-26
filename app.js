@@ -209,7 +209,7 @@ app.get("/app", checkAuth, async (req, res) => {
       return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     }
 
-    server.dispatcher.on('stateChange', (oldState, newState) => {
+    server.connection.on('stateChange', (oldState, newState) => {
       console.log(oldState.status + ' => ' + newState.status)
       if(newState.status === 'playing') {
         io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "playing" })
@@ -218,7 +218,17 @@ app.get("/app", checkAuth, async (req, res) => {
       }
     })
 
-    server.connection.on('idle', (oldState, newState) => {
+    server.dispatcher.on('idle', (oldState, newState) => {
+      console.log(oldState.status + ' => ' + newState.status)
+      io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
+    })
+
+    server.dispatcher.on('playing', (oldState, newState) => {
+      console.log(oldState.status + ' => ' + newState.status)
+      io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "playing" })
+    })
+
+    server.dispatcher.on('paused' || 'autopaused', (oldState, newState) => {
       console.log(oldState.status + ' => ' + newState.status)
       io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
     })

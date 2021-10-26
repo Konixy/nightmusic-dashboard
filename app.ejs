@@ -92,6 +92,8 @@ socket.on('pause', (response) => {
   } else if(response.succes === false) {
     disable(true)
     button.classList.remove('spinner-border')
+    button.classList.remove('btn-play')
+    button.classList.add('btn-pause')
     alert.innerText = response.msg
     alert.style.display = "block"
     setTimeout(() => {
