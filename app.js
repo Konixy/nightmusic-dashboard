@@ -205,6 +205,10 @@ app.get("/app", checkAuth, async (req, res) => {
       return io.emit('userVoice', { succes: false, msg: "Vous n'êtes connecté à aucun salon vocale" })
     }
 
+    if(!server.connection) {
+      return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+    }
+
     server.dispatcher.on('stateChange', (oldState, newState) => {
       console.log(oldState.status + ' => ' + newState.status)
       if(newState.status === 'playing') {
@@ -237,9 +241,7 @@ app.get("/app", checkAuth, async (req, res) => {
       }
     })
 
-    if(!server.connection) {
-      io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
-    } else if(!server.connection.channelId === userVoice.channel.id) {
+    if(!server.connection.channelId === userVoice.channel.id) {
       io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale", state: "error" })
     } else if(!server.dispatcher) {
       io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
