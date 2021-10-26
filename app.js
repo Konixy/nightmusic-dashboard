@@ -212,6 +212,12 @@ app.get("/app", checkAuth, async (req, res) => {
       return io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale", state: "error" })
     } else if(!server.dispatcher) {
       return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
+    } else if(server.currentVideo) {
+      if(server.dispatcher.state.status === "playing") {
+        return io.emit('userVoice', { succes: true, msg: server, state: "playing" })
+      } else if(server.dispatcher.state.status === "idle") {
+        return io.emit('userVoice', { succes: true, msg: server, state: "paused" })
+      }
     }
     
     server.dispatcher.on('stateChange', (oldState, newState) => {
