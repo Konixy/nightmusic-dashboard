@@ -59,7 +59,7 @@ function pauseMusic() {
 
 socket.on('userVoice', (response) => {
   if(response.succes === true) {
-    disable(false)
+    button.disabled = false
     if(response.state === "playing") {
       button.classList.remove('btn-pause')
       button.classList.add('btn-play')
@@ -80,12 +80,12 @@ socket.on('userVoice', (response) => {
 
 socket.on('pause', (response) => {
   if(response.succes === true && response.msg === 'paused') {
-    disable(false)
+    button.disabled = false
     button.classList.remove('spinner-border')
     button.classList.remove('btn-play')
     button.classList.add('btn-pause')
   } else if(response.succes === true && response.msg === 'resumed') {
-    disable(false)
+    button.disabled = false
     button.classList.remove('spinner-border')
     button.classList.remove('btn-pause')
     button.classList.add('btn-play')
