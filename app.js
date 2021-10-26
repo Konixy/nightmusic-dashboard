@@ -217,9 +217,9 @@ app.get("/app", checkAuth, async (req, res) => {
       server.connection.on('stateChange', (oldState, newState) => {
         console.log(oldState.status + ' => ' + newState.status)
         if(newState.status === 'playing') {
-          io.emit('userVoice', { succes: true, msg: null, state: "playing" })
-        } else if(newState.status === "idle") {
-          io.emit('userVoice', { succes: true, msg: null, state: "idle" })
+          io.emit('userVoice', { succes: true, msg: server, state: "playing" })
+        } else if(newState.status === "paused" || newState.status === "autopaused") {
+          io.emit('userVoice', { succes: true, msg: server, state: "paused" })
         }
       })
     }
