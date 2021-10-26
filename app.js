@@ -14,6 +14,11 @@ import figlet from "figlet"
 import GuildSchema from "./src/schema.js"
 import config from './config.js'
 import mongoose from "mongoose"
+import Http from "http"
+const app = express()
+const http = Http.Server(app)
+import Socket from "socket.io"
+const io = new Socket(http)
 
 let GuildSettings;
 try {
@@ -22,7 +27,6 @@ try {
   GuildSettings = mongoose.model("prefix", GuildSchema)
 }
 
-const app = express()
 const MemoryStore = CreateMemoryStore(session)
 
 const usingCustomDomain = config.usingCustomDomain
@@ -187,9 +191,50 @@ app.get("/app", checkAuth, async (req, res) => {
       }
     })
   });
+
+  io.on('connection', async (socket) => {
+    socket.on('pause', () => {
+      let server;
+      try {
+        server = client.servers.get(userVoice.guild.id)
+        if(!server) {
+          return io.emit('pause', { status: 404, msg: "Je ne suis pas connecté a votre salon vocale" })
+        }
+      } catch {
+        server = null
+        return io.emit('pause', { status: 404, msg: "Vous n'êtes connecté a aucun salon vocale" })
+      }
+
+      if(server) {
+        if(!server.connection) {
+          return res.status(404).send("Aucune musique en cours de lecture")
+        } else if(!server.connection.channelId === userVoice.channel.id) {
+          return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
+        } else if(!server.dispatcher) {
+          return res.status(404).send("Aucune musique en cours de lecture")
+        } else {
+          try {
+            if(server.dispatcher.state.status === "paused") {
+              server.dispatcher.unpause()
+              return res.status(200).send("resumed")
+            } else if(server.dispatcher.state.status === "playing") {
+              server.dispatcher.pause()
+              return res.status(200).send('paused')
+            } else if(server.dispatcher.state.status === "idle") {
+              return res.status(404).send('Aucune musique en cours de lecture')
+            }
+            return res.status(404).send('An error occured')
+          } catch {
+            return res.status(404).send('An error occured')
+          }
+        }
+      }
+    })
+  })
   
   renderTemplate(res, req, "app.ejs", { perms: Permissions, userVoice: userVoice, servers: client.servers });
 });
+
 
 app.post("/app", checkAuth, async (req, res) => {
   let userVoice;
@@ -246,7 +291,7 @@ app.get("/invite", (req, res) => {
   res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&response_type=code&redirect_uri=${encodeURIComponent(`${client.configDomain}${client.port === 80 ? "" : `:${client.port}`}/panel`)}`)
 });
 
-app.listen(port, null, null, () => {
+http.listen(port, null, null, () => {
   console.log(`✅ Server ready on port ${port}`.green)
 })
 }

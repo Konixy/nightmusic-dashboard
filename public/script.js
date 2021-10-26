@@ -4,6 +4,9 @@ const navHome = document.getElementById('navhome')
 const navPanel = document.getElementById('navpanel')
 const dropdown = document.querySelectorAll('.drop-btn')
 
+isLocal = true
+
+const domain = (isLocal ? "http://localhost" : "https://nightmusic-dashboard.herokuapp.com")
 
 let pageName = document.title.split(' ')
 pageName = pageName[0].toLowerCase()
@@ -18,32 +21,32 @@ function inviteBot(page) {
     window.open(page, 'Inviter NightMusic', 'menubar=no, scrollbars=no, top=100, left=100, width=500, height=800');
 }
 
-function pauseMusic() {
-  const alert = document.getElementById('alert')
-  const button = document.getElementById('dispatcher-btn')
-  var ajax = new XMLHttpRequest();
-  ajax.onreadystatechange = function(){
-    if(this.readyState == 4 && this.status == 200){
-      if(this.response === 'paused') {
-        button.classList.remove('btn-play')
-        button.classList.add('btn-pause')
-      } else if(this.response === 'resumed') {
-        button.classList.remove('btn-pause')
-        button.classList.add('btn-play')
-      }
-    } else if(this.status == 404) {
+// function pauseMusic() {
+//   const alert = document.getElementById('alert')
+//   const button = document.getElementById('dispatcher-btn')
+//   var ajax = new XMLHttpRequest();
+//   ajax.onreadystatechange = function(){
+//     if(this.readyState == 4 && this.status == 200){
+//       if(this.response === 'paused') {
+//         button.classList.remove('btn-play')
+//         button.classList.add('btn-pause')
+//       } else if(this.response === 'resumed') {
+//         button.classList.remove('btn-pause')
+//         button.classList.add('btn-play')
+//       }
+//     } else if(this.status == 404) {
 
-      alert.innerText = this.response
-      alert.style.display = "block"
-      setTimeout(() => {
-        alert.style.display = "none"
-      }, 2500)
-    }
-  };
-  var formdata = new FormData(document.getElementById("dispatcher"));
-  ajax.open("POST", "/app", true);
-  ajax.send(formdata);
-}
+//       alert.innerText = this.response
+//       alert.style.display = "block"
+//       setTimeout(() => {
+//         alert.style.display = "none"
+//       }, 2500)
+//     }
+//   };
+//   var formdata = new FormData(document.getElementById("dispatcher"));
+//   ajax.open("POST", "/app", true);
+//   ajax.send(formdata);
+// }
 
 // function skip() {
   

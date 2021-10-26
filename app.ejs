@@ -31,5 +31,30 @@ if(userVoice) {
 <p id="alert"></p>
   </section>
 </main>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io()
+
+function pauseMusic() {
+  const alert = document.getElementById('alert')
+  const button = document.getElementById('dispatcher-btn')
+  socket.emit('pause')
+  socket.on('pause', (response) => {
+    if(response.msg === 'paused') {
+      button.classList.remove('btn-play')
+      button.classList.add('btn-pause')
+    } else if(response.msg === 'resumed') {
+      button.classList.remove('btn-pause')
+      button.classList.add('btn-play')
+    } else if(response.status === 404) {
+      alert.innerText = response.msg
+      alert.style.display = "block"
+      setTimeout(() => {
+        alert.style.display = "none"
+      }, 2500)
+    }
+  })
+}
+</script>
 
 <%- include("src/footer.ejs", { footer: false }) %>

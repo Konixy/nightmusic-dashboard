@@ -774,13 +774,17 @@ client.on("ready", async () => {
           type: "LISTENING"
       });
   }, 5000)
-});
 
-client.once('ready', async () => {
-  await Dashboard(client, sendMessage)
+  await Dashboard(client, sendMessage);
     client.user.setStatus('idle');
     console.log(`Logged in as `.green + `${client.user.tag}`.yellow);
-})
+});
+
+// client.once('ready', async () => {
+//     await Dashboard(client, sendMessage)
+//     client.user.setStatus('idle');
+//     console.log(`Logged in as `.green + `${client.user.tag}`.yellow);
+// })
 
 client.on('error', (error) => console.error(`${error}`.red));
 
