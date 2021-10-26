@@ -214,12 +214,11 @@ app.get("/app", checkAuth, async (req, res) => {
       return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     }
     if(server.connection) {
-      console.log(server.connection)
       server.connection.on('stateChange', (oldState, newState) => {
-        console.log(oldState + ' => ' + newState)
-        if(newState === 'playing') {
+        console.log(oldState.status + ' => ' + newState.status)
+        if(newState.status === 'playing') {
           io.emit('userVoice', { succes: true, msg: null, state: "playing" })
-        } else if(newState === "idle") {
+        } else if(newState.status === "idle") {
           io.emit('userVoice', { succes: true, msg: null, state: "idle" })
         }
       })
