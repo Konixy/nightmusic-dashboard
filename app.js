@@ -218,6 +218,8 @@ app.get("/app", checkAuth, async (req, res) => {
       } else if(server.dispatcher.state.status === "idle") {
         return io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
       }
+    } else if(!server.currentVideo.url) {
+      return io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     }
     
     server.dispatcher.on('stateChange', (oldState, newState) => {
