@@ -6,7 +6,7 @@ export default {
     usingCustomDomain: true,
     configDomain: "https://nightmusic-dashboard.herokuapp.com",
     localDomain: "http://localhost",
-    isLocal: true,
+    isLocal: false,
     discordInvite: "https://discord.gg/WeHzUUz7ZZ"
   }
   
