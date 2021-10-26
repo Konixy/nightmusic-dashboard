@@ -203,28 +203,29 @@ app.get("/app", checkAuth, async (req, res) => {
       } catch {
         server = null
         return io.emit('pause', { status: 404, msg: "Vous n'êtes connecté a aucun salon vocale" })
-      }
+      } // io.emit('pause', { status: 404, msg: "" })
 
       if(server) {
         if(!server.connection) {
-          return res.status(404).send("Aucune musique en cours de lecture")
+          return io.emit('pause', { status: 404, msg: "Aucune musique en cours de lecture" })
         } else if(!server.connection.channelId === userVoice.channel.id) {
-          return res.status(404).send("Je ne suis pas connecté a votre salon vocale")
+          return io.emit('pause', { status: 404, msg: "Je ne suis pas connecté a votre salon vocale" })
         } else if(!server.dispatcher) {
-          return res.status(404).send("Aucune musique en cours de lecture")
+          return io.emit('pause', { status: 404, msg: "Aucune musique en cours de lecture" })
         } else {
           try {
             if(server.dispatcher.state.status === "paused") {
               server.dispatcher.unpause()
-              return res.status(200).send("resumed")
+              return io.emit('pause', { status: 200, msg: "resumed" })
             } else if(server.dispatcher.state.status === "playing") {
               server.dispatcher.pause()
-              return res.status(200).send('paused')
+              return io.emit('pause', { status: 200, msg: 'paused' })
             } else if(server.dispatcher.state.status === "idle") {
-              return res.status(404).send('Aucune musique en cours de lecture')
+              return io.emit('pause', { status: 404, msg: 'Aucune musique en cours de lecture' })
             }
-            return res.status(404).send('An error occured')
+            return io.emit('pause', { status: 404, msg: 'An error occured' })
           } catch (err) {
+            io.emit('pause', { status: 404, msg: 'An error occured' })
             return console.log(err)
           }
         }
