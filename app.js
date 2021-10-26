@@ -210,7 +210,7 @@ app.get("/app", checkAuth, async (req, res) => {
     }
 
     server.connection.on('stateChange', (oldState, newState) => {
-      console.log(oldState.status + ' => ' + newState.status)
+      console.log(oldState.status + ' => ' + newState.status + " : stateChange")
       if(newState.status === 'playing') {
         io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "playing" })
       } else if(newState.status === "paused" || newState.status === "autopaused") {
@@ -219,17 +219,17 @@ app.get("/app", checkAuth, async (req, res) => {
     })
 
     server.dispatcher.on('idle', (oldState, newState) => {
-      console.log(oldState.status + ' => ' + newState.status)
+      console.log(oldState.status + ' => ' + newState.status + " : idle")
       io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
     })
 
     server.dispatcher.on('playing', (oldState, newState) => {
-      console.log(oldState.status + ' => ' + newState.status)
+      console.log(oldState.status + ' => ' + newState.status + " : playing")
       io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "playing" })
     })
 
     server.dispatcher.on('paused' || 'autopaused', (oldState, newState) => {
-      console.log(oldState.status + ' => ' + newState.status)
+      console.log(oldState.status + ' => ' + newState.status + " : paused")
       io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "paused" })
     })
 
@@ -239,7 +239,7 @@ app.get("/app", checkAuth, async (req, res) => {
     })
 
     server.connection.on('ready', (oldState, newState) => {
-      console.log(oldState.status + ' => ' + newState.status)
+      console.log(oldState.status + ' => ' + newState.status + " : ready")
       if(server.currentVideo.url) {
         if(server.dispatcher.state.status === "playing") {
           io.emit('userVoice', { succes: true, msg: server.currentVideo, state: "playing" })
@@ -265,7 +265,8 @@ app.get("/app", checkAuth, async (req, res) => {
       io.emit('userVoice', { succes: false, msg: "Aucune musique en cours de lecture", state: "error" })
     }
 
-    socket.on('pause', async () => {
+    socket.on('pause', async (response) => {
+      if(response.succes) return;
       if(server) {
         if(!server.connection) {
           return io.emit('pause', { succes: false, msg: "Aucune musique en cours de lecture" })
