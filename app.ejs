@@ -78,29 +78,55 @@ socket.on('userVoice', (response) => {
   }
 })
 
-socket.on('pause', (response) => {
-  if(response.succes === true && response.msg === 'paused') {
-    button.disabled = false
-    button.classList.remove('spinner-border')
-    button.classList.remove('btn-play')
-    button.classList.add('btn-pause')
-  } else if(response.succes === true && response.msg === 'resumed') {
-    button.disabled = false
-    button.classList.remove('spinner-border')
-    button.classList.remove('btn-pause')
-    button.classList.add('btn-play')
-  } else if(response.succes === false) {
-    disable(true)
-    button.classList.remove('spinner-border')
-    button.classList.remove('btn-play')
-    button.classList.add('btn-pause')
-    alert.innerText = response.msg
-    alert.style.display = "block"
-    setTimeout(() => {
-      alert.style.display = "none"
-    }, 2500)
-  }
+socket.on('error', (response) => {
+  disable(true)
+  button.classList.remove('spinner-border')
+  button.classList.remove('btn-play')
+  button.classList.add('btn-pause')
+  alert.innerText = response.msg
+  alert.style.display = "block"
+  setTimeout(() => {
+    alert.style.display = "none"
+  }, 2500)
 })
+
+socket.on('paused', () => {
+  button.disabled = false
+  button.classList.remove('spinner-border')
+  button.classList.remove('btn-play')
+  button.classList.add('btn-pause')
+})
+
+socket.on('resumed', () => {
+  button.disabled = false
+  button.classList.remove('spinner-border')
+  button.classList.remove('btn-pause')
+  button.classList.add('btn-play')
+})
+
+// socket.on('pause', (response) => {
+//   if(response.succes === true && response.msg === 'paused') {
+//     button.disabled = false
+//     button.classList.remove('spinner-border')
+//     button.classList.remove('btn-play')
+//     button.classList.add('btn-pause')
+//   } else if(response.succes === true && response.msg === 'resumed') {
+//     button.disabled = false
+//     button.classList.remove('spinner-border')
+//     button.classList.remove('btn-pause')
+//     button.classList.add('btn-play')
+//   } else if(response.succes === false) {
+//     disable(true)
+//     button.classList.remove('spinner-border')
+//     button.classList.remove('btn-play')
+//     button.classList.add('btn-pause')
+//     alert.innerText = response.msg
+//     alert.style.display = "block"
+//     setTimeout(() => {
+//       alert.style.display = "none"
+//     }, 2500)
+//   }
+// })
 
 </script>
 

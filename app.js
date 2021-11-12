@@ -257,35 +257,32 @@ app.get("/app", checkAuth, async (req, res) => {
     }
 
     socket.on('pause', async (response) => {
-      if(response) {
-        if(response.succes === true || response.succes === false) return;
-      }
       if(server) {
         if(!server.connection) {
-          return io.emit('pause', { succes: false, msg: "Aucune musique en cours de lecture" })
+          return io.emit('error', { msg: "Aucune musique en cours de lecture" })
         } else if(!server.connection.channelId === userVoice.channel.id) {
-          return io.emit('pause', { succes: false, msg: "Je ne suis pas connecté a votre salon vocale" })
+          return io.emit('error', { msg: "Je ne suis pas connecté a votre salon vocale" })
         } else if(!server.dispatcher) {
-          return io.emit('pause', { succes: false, msg: "Aucune musique en cours de lecture" })
+          return io.emit('error', { msg: "Aucune musique en cours de lecture" })
         } else {
           try {
             if(server.dispatcher.state.status === "paused") {
               await server.dispatcher.unpause()
-              return io.emit('pause', { succes: true, msg: "resumed" })
+              return io.emit('resumed')
             } else if(server.dispatcher.state.status === "playing") {
               await server.dispatcher.pause()
-              return io.emit('pause', { succes: true, msg: 'paused' })
+              return io.emit('paused')
             } else if(server.dispatcher.state.status === "idle") {
-              return io.emit('pause', { succes: false, msg: 'Aucune musique en cours de lecture' })
+              return io.emit('error', { msg: 'Aucune musique en cours de lecture' })
             }
-            return io.emit('pause', { succes: false, msg: 'An error occured' })
+            return io.emit('error', { msg: 'An error occured' })
           } catch (err) {
-            io.emit('pause', { succes: false, msg: 'An error occured' })
+            io.emit('error', { msg: 'An error occured' })
             return console.log(err)
           }
         }
       } else {
-        return io.emit('pause', { succes: false, msg: "Je ne suis pas connecté a votre salon vocale" })
+        return io.emit('error', { msg: "Je ne suis pas connecté a votre salon vocale" })
       }
     })
   })
