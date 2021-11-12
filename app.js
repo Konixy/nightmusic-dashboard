@@ -243,7 +243,7 @@ app.get("/app", checkAuth, async (req, res) => {
     })
 
     client.on('voiceStateUpdate', (oldState, newState) => {
-      if(newState.channelId === userVoice.channel.id && newState.member.id === userVoice.user.id) {
+      if(newState.channelId === userVoice.channel.id && newState.member.id === userVoice.member.id) {
         return io.emit('userVoice', { sucess: false, msg: "Aucune musique en cours de lecture" })
       }
     })
