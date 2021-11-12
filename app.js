@@ -242,6 +242,13 @@ app.get("/app", checkAuth, async (req, res) => {
       }
     })
 
+    client.on('voiceStateUpdate', (oldState, newState) => {
+      if(newState.channelId === userVoice.channel.id) {
+        return io.emit('userVoice', { sucess: false, msg: "Aucune musique en cours de lecture" })
+      }
+    })
+  
+
     if(!server.connection.channelId === userVoice.channel.id) {
       io.emit('userVoice', { succes: false, msg: "Je ne suis pas connecté à votre salon vocale", state: "error" })
     } else if(!server.dispatcher) {
