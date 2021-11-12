@@ -142,7 +142,6 @@ async function runVideo(message) {
     return message.channel.send(`:notes: En train de jouer : \`${  server.currentVideo.title  }\` !`)
 };
 
-
 client.on("messageCreate", async (message) => {
     if (message.author.bot || !message.guild) return;
 
@@ -155,7 +154,6 @@ client.on("messageCreate", async (message) => {
             prefix = data.prefixDb;
         }
     });
-
 
     if (!message.content.startsWith(prefix)) return;
 
